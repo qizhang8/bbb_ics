@@ -66,6 +66,7 @@ Meteor.StubServer = (function() {
                                         "joined":true,
                                         "userid":"4"
                                     },
+                                    "connection_status": "online",
                                     "name":"Leonardo",
                                     "listenOnly":false,
                                     "has_stream":false,
@@ -77,7 +78,7 @@ Meteor.StubServer = (function() {
                                 "name": "user_joined_message"
                             }
                         };
-                     //   publish(Meteor.config.redis.channels.fromBBBApps, reply);
+                        publish(Meteor.config.redis.channels.fromBBBApps, reply);
 
 
                     } else if (eventName == "get_all_meetings_request") {

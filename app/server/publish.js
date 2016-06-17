@@ -46,8 +46,7 @@ Meteor.publish('users', function(meetingId, userid, authToken) {
         };
       })(this)));
 
-      //publish the users which are not offline
-      return Meteor.Users.find({
+      let onlineusers =  Meteor.Users.find({
         meetingId: meetingId,
         'user.connection_status': {
           $in: ["online", ""]
@@ -57,6 +56,8 @@ Meteor.publish('users', function(meetingId, userid, authToken) {
           'authToken': false
         }
       });
+      //publish the users which are not offline
+      return onlineusers;
     } else {
       Meteor.log.warn("was not authorized to subscribe to 'users'");
       return this.error(new Meteor.Error(402, "The user was not authorized to subscribe to 'users'"));

@@ -24,6 +24,7 @@ this.Router.map(function() {
       userId = this.params.user_id;
       authToken = this.params.auth_token;
       setInSession("loginUrl", this.originalUrl);
+      setInSession("logoutURL", "/sign-out");
 
       // catch if any of the user's meeting data is invalid
       if ((authToken == null) || (meetingId == null) || (userId == null)) {
@@ -40,6 +41,14 @@ this.Router.map(function() {
         clearSessionVar(applyNewSessionVars);
       }
       return this.next();
+    }
+  });
+
+  this.route('/sign-out', {
+    name: 'sign-out',
+    onBeforeAction: function () {
+      AccountsTemplates.logout();
+      Router.go('/');
     }
   });
 
@@ -94,26 +103,6 @@ this.Router.map(function() {
                                               alert("Error: could not find the logoutURL");
                                               setInSession("logoutURL", document.location.hostname);
                                             };
-
-                                            // obtain the logoutURL
-                                            a = $.ajax({
-                                              dataType: 'json',
-                                              url: '/bigbluebutton/api/enter'
-                                            });
-                                            a.done(data => {
-                                              if (data.response.logoutURL != null) { // for a meeting with 0 users
-                                                setInSession("logoutURL", data.response.logoutURL);
-                                              } else {
-                                                if (data.response.logoutUrl != null) { // for a running meeting
-                                                  setInSession("logoutURL", data.response.logoutUrl);
-                                                } else {
-                                                  return handleLogourUrlError();
-                                                }
-                                              }
-                                            });
-                                            return a.fail((data, textStatus, errorThrown) => {
-                                              return handleLogourUrlError();
-                                            });
                                           }
                                         });
                                       }

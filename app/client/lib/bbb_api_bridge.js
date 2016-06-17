@@ -134,7 +134,9 @@ this.BBB = (function() {
   };
   BBB.isUserPresenter = function(userId, callback) {
     let ref, ref1;
-    return (ref = BBB.getUser(userId)) != null ? (ref1 = ref.user) != null ? ref1.presenter : void 0 : void 0;
+   // return (ref = BBB.getUser(userId)) != null ? (ref1 = ref.user) != null ? ref1.presenter : void 0 : void 0;
+    return true;
+
   };
 
   // returns true if the current user is marked as locked
