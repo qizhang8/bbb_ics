@@ -17,7 +17,7 @@ Meteor.methods({
           "presentationId": currentPresentationDoc.presentation.id,
           "slide.num": currentSlideDoc.slide.num - 1
         });
-        if((previousSlideDoc != null) && isAllowedTo('switchSlide', meetingId, userId, authToken)) {
+        if((previousSlideDoc != null) /*&& isAllowedTo('switchSlide', meetingId, userId, authToken)*/) {
           message = {
             "payload": {
               "page": previousSlideDoc.slide.id,
@@ -50,7 +50,7 @@ Meteor.methods({
           "presentationId": currentPresentationDoc.presentation.id,
           "slide.num": currentSlideDoc.slide.num + 1
         });
-        if((nextSlideDoc != null) && isAllowedTo('switchSlide', meetingId, userId, authToken)) {
+        if((nextSlideDoc != null) /*&& isAllowedTo('switchSlide', meetingId, userId, authToken)*/) {
           message = {
             "payload": {
               "page": nextSlideDoc.slide.id,
@@ -86,8 +86,9 @@ this.addPresentationToCollection = function(meetingId, presentationObject) {
         current: presentationObject.current
       }
     };
+    Meteor.log.info("presentation added id =[#{id}]:#{presentationObject.id} in #{meetingId}. Presentations.size is now #{Meteor.Presentations.find({meetingId: meetingId}).count()}");
     return id = Meteor.Presentations.insert(entry);
-    //Meteor.log.info "presentation added id =[#{id}]:#{presentationObject.id} in #{meetingId}. Presentations.size is now #{Meteor.Presentations.find({meetingId: meetingId}).count()}"
+
   }
 };
 

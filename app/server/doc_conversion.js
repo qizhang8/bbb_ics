@@ -4,7 +4,7 @@
  */
 
 const PdfImage = require('pdf-image');
-
+const pathModule = require('path');
 
 /**
  * TODO support other encodings:
@@ -28,18 +28,6 @@ Meteor.methods({
                 Meteor.log.info('The file ' + name + ' (' + encoding + ') was saved to ' + path);
                 var PDFImage = PdfImage.PDFImage;
                 var pdfImage = new PDFImage(path + name);
-                function convert(page, notify) {
-                    if (page >= 0) {
-                        Meteor.log.info("converting " + page);
-                        pdfImage.convertPage(page).then(function(imagePath) {
-                            convert(--page);
-                        });
-                    } else return;
-                }
-                pdfImage.numberOfPages().then(function (numberOfPages) {
-                    Meteor.log.info(numberOfPages);
-                    convert(numberOfPages-1);
-                });
 
                 let reply;
                 reply = {
@@ -49,19 +37,7 @@ Meteor.methods({
                             id: "presentation001",
                             name: name,
                             current: true,
-                            pages: [
-                                {
-                                    height_ratio: 100,
-                                    y_offset: 0,
-                                    num: 0,
-                                    x_offset: 0,
-                                    current: true,
-                                    png_uri: 'http://localhost:3000/'+ 'smarx_fec' + '-0.png',
-                                    id: 'presentation001/0',
-                                    width_ratio: 100,
-                                }
-                            ]
-
+                            pages: [ ]
                         },
                         pointer: {
                             x: 0.0,
@@ -74,8 +50,50 @@ Meteor.methods({
                     }
                 };
 
-                publish(Meteor.config.redis.channels.fromBBBApps, reply);
 
+                function convert(page, notify) {
+                    if (page >= 0) {
+                        Meteor.log.info("converting " + page);
+                        pdfImage.convertPage(page).then(function(imagePath) {
+                            var slide =                                 {
+                                height_ratio: 100,
+                                y_offset: 0,
+                                num: page,
+                                x_offset: 0,
+                                current: false,
+                                png_uri: 'http://localhost:3000/'+ pathModule.basename(imagePath),
+                                id: 'presentation001/' + page,
+                                width_ratio: 100,
+                            }
+                            reply.payload.presentation.pages.push(slide);
+                            convert(--page, notify);
+                        });
+                    } else notify();
+                }
+                pdfImage.numberOfPages().then(function (numberOfPages) {
+                    Meteor.log.info(numberOfPages);
+                    convert(numberOfPages-1, function() {
+                        publish(Meteor.config.redis.channels.fromBBBApps, reply);
+                        let showPage;
+                        showPage = {
+                            "payload": {
+                                "meeting_id": "meeting001",
+                                page: {
+                                    height_ratio: 100,
+                                    y_offset: 0,
+                                    x_offset: 0,
+                                    id: 'presentation001/0',
+                                    width_ratio: 100,
+                                }
+                            },
+                            "header": {
+                                "timestamp": new Date().getTime(),
+                                "name": "presentation_page_changed_message"
+                            }
+                        };
+                        publish(Meteor.config.redis.channels.fromBBBApps, showPage);
+                    });
+                });
             }
         });
 

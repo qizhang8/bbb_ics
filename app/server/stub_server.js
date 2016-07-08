@@ -106,6 +106,30 @@ Meteor.StubServer = (function() {
                     }
 
                 }
+                else if (channel === Meteor.config.redis.channels.toBBBApps.presentation) {
+                    if (eventName === "go_to_slide") {
+
+                        let showPage;
+                        showPage = {
+                            "payload": {
+                                "meeting_id": "meeting001",
+                                page: {
+                                    height_ratio: 100,
+                                    y_offset: 0,
+                                    x_offset: 0,
+                                    id: payload.page,
+                                    width_ratio: 100,
+                                }
+                            },
+                            "header": {
+                                "timestamp": new Date().getTime(),
+                                "name": "presentation_page_changed_message"
+                            }
+                        };
+                        publish(Meteor.config.redis.channels.fromBBBApps, showPage);
+
+                    }
+                }
             });
 
             callback(this);

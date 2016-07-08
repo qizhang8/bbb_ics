@@ -86,7 +86,7 @@ Meteor.startup(() => {
       "get_chat_history_reply",
       //"get_all_meetings_reply"
       "get_whiteboard_shapes_reply",
-      "presentation_shared_message",
+     // "presentation_shared_message",
       "presentation_conversion_done_message",
       "presentation_conversion_progress_message",
       "presentation_page_generated_message",
@@ -106,6 +106,7 @@ Meteor.startup(() => {
         message: data.jsonMsg
       });
     }
+
 
     // we currently disregard the pattern and channel
     if(message != null && message.header != null && payload != null) {
@@ -361,6 +362,7 @@ Meteor.startup(() => {
           pages = payload.presentation.pages;
           for(j = 0; j < pages.length; j++) {
             slide = pages[j];
+            Meteor.log.info("adding slide " + j);
             addSlideToCollection(
               meetingId,
               presentationId,

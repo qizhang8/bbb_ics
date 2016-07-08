@@ -27,6 +27,8 @@ this.displayThisSlide = function(meetingId, newSlideId, slideObject) {
       "slide.y_offset": slideObject.y_offset
     }
   });
+
+  Meteor.log.info("display slide" + newSlideId);
 };
 
 this.addSlideToCollection = function(meetingId, presentationId, slideObject) {
@@ -52,8 +54,8 @@ this.addSlideToCollection = function(meetingId, presentationId, slideObject) {
         thumb_uri: slideObject.thumb_uri
       }
     };
+
     return id = Meteor.Slides.insert(entry);
-    //Meteor.log.info "added slide id =[#{id}]:#{slideObject.id} in #{meetingId}. Now there are #{Meteor.Slides.find({meetingId: meetingId}).count()} slides in the meeting"
   }
 };
 
